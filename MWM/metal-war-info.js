@@ -32,10 +32,9 @@
       console.log(`%c ${new Date().toLocaleString()} - Can't find the login_button`, LOG_COLOR_ERROR);
       return;
     }
-
     // do click login
     login_button.click();
-
+    setInterval(WaitForLogin, 15 * MILISECOND);
     setTimeout(() => {
       let wallets = document.getElementsByClassName('ual-auth-text');
       if (!wallets) {
@@ -63,7 +62,7 @@
       setInterval(WaitForOpenTab, 5 * MILISECOND);
 
     }, 5 * MILISECOND);
-  }, 15 * MILISECOND);
+  }, 5 * MILISECOND);
 
   // Open the popup info
   var WaitForOpenTab = setInterval(function() {
@@ -97,8 +96,10 @@
       console.log(`%c ${new Date().toLocaleString()} - Can't find the units tab`, LOG_COLOR_ERROR);
       return;
     }
-    unit_tab.click();
 
+    if (unit_tab.classList.contains("active_tab")) return;
+
+    unit_tab.click();
     setInterval(WaitForOpenTab, 5 * SECOND * MILISECOND);
     console.log(`%c ${new Date().toLocaleString()} - Open the info`, LOG_COLOR);
 
