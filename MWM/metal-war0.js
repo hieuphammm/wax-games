@@ -56,7 +56,7 @@
         let timer = document.getElementsByClassName('timer')[0];
         let remainSeconds = 0;
         if (timer) {
-          let timerEl = timer.innerHTML.split(':');
+          let timerEl = timer.innerText.split(':');
           remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
         }
 
@@ -73,7 +73,7 @@
           if (raid_buttons) {
             let raid_button = null;
             raid_buttons.forEach((button, i) => {
-              if (button.outerText == "RAID") {
+              if (button.innerText == "RAID") {
                 raid_button = button;
                 return;
               }
