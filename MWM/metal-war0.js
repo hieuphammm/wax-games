@@ -5,6 +5,7 @@
 // @description  Auto Script FOR MWM
 // @author       HieuPham
 // @match        http*://game2.metal-war.com
+// @icon         https://game2.metal-war.com/_nuxt/img/ant.5cc4b20.png
 // @updateURL    https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
 // @downloadURL  https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
 // @grant        none
@@ -41,15 +42,15 @@
   function doMining(tanks, i) {
     setTimeout(() => {
       let item = tanks[i];
-
-      // 1.  Select the tank
-      if (!item.style.getPropertyValue("transform").toString().includes("scale(1)")) {
-        console.log(`%c Select tank #${i+1}`, LOG_COLOR);
-        item.click();
-      } else {
-        console.log(`%c Tank #${i+1} selected`, LOG_COLOR);
-      }
-
+      setTimeout(() => {
+        // 1.  Select the tank
+        if (!item.style.getPropertyValue("transform").toString().includes("scale(1)")) {
+          console.log(`%c Select tank #${i+1}`, LOG_COLOR);
+          item.click();
+        } else {
+          console.log(`%c Tank #${i+1} selected`, LOG_COLOR);
+        }
+      }, 1000);
       setTimeout(() => {
         // 2. Check remaining time - Click perform the rading
         let timer = document.getElementsByClassName('timer')[0];
@@ -109,7 +110,7 @@
         } else {
           console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
         }
-      }, 2 * MILISECOND);
-    }, (i * 30) * MILISECOND);
+      }, 3 * MILISECOND);
+    }, ((i + 1) * 30) * MILISECOND);
   }
 })();
