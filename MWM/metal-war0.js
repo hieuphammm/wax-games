@@ -34,16 +34,23 @@
     let tanks = tanks_container.children;
     // Loop all tanks
     for (let i = 0; i < tanks.length; i++) {
-      setTimeout(() => {
-        let item = tanks[i];
-        // 1.  Select the tank
-        if (!item.style.getPropertyValue("transform").toString().includes("scale(1)")) {
-          console.log(`%c Select tank #${i+1}`, LOG_COLOR);
-          item.click();
-        } else {
-          console.log(`%c Tank #${i+1} selected`, LOG_COLOR);
-        }
+      doMining(tanks, i);
+    }
+  }, RAID * SECOND * MILISECOND);
 
+  function doMining(tanks, i) {
+    setTimeout(() => {
+      let item = tanks[i];
+
+      // 1.  Select the tank
+      if (!item.style.getPropertyValue("transform").toString().includes("scale(1)")) {
+        console.log(`%c Select tank #${i+1}`, LOG_COLOR);
+        item.click();
+      } else {
+        console.log(`%c Tank #${i+1} selected`, LOG_COLOR);
+      }
+
+      setTimeout(() => {
         // 2. Check remaining time - Click perform the rading
         let timer = document.getElementsByClassName('timer')[0];
         let remainSeconds = 0;
@@ -95,15 +102,14 @@
           let button = document.getElementsByClassName('repair_price')[0];
           if (button) {
             button.click();
-            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`,LOG_COLOR);
+            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
           } else {
             console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
           }
         } else {
           console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
         }
-
-      }, (5 + i * 30) * MILISECOND);
-    }
-  }, RAID * SECOND * MILISECOND);
+      }, 2 * MILISECOND);
+    }, (i * 30) * MILISECOND);
+  }
 })();
