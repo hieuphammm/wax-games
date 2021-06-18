@@ -13,7 +13,6 @@
 
 (function init() {
 
-
   const NUMBER_OF_UNIT = 2;
   const RAID = NUMBER_OF_UNIT;
   const MILISECOND = 1000;
@@ -23,8 +22,40 @@
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
   const LOG_COLOR_ERROR = 'color: red; background: black';
+  const WEB_HOOK = 'https://discord.com/api/webhooks/855439270953484298/abc..';
+  const ALLOW_WEB_HOOK = false;
 
   var raidTimes = [new Date()];
+  var logs = [];
+
+  // Log-error writer
+  var LogCapturing = setInterval(function() {
+    let notify_main = document.getElementsByClassName('notify_main');
+    if (!notify_main) {
+      return;
+    }
+    notify_main.forEach((message, i) => {
+      let message_text = message.innerText.toString().toLowerCase();
+      if (message_text.includes("wrong")) {
+        logs.push(message_text); // push to the array
+        sendMessage(message_text, true); // send to webhook
+      }
+      if (message_text.includes("error")) {
+        sendMessage(message_text, true); // send to webhook
+      }
+      sendMessage(message_text); // send to webhook
+    });
+  }, 10 * MILISECOND);
+
+  // Log monitoring
+  var LogMonitoring = setInterval(function() {
+    if (logs.length > 3) {
+      location.reload();
+    } else {
+      logs = [];
+    }
+  }, 10 * SECOND * MILISECOND);
+
   // Wait for login
   var WaitForLogin = setInterval(function() {
     let login_button = document.getElementById('ual-button');
@@ -102,11 +133,12 @@
     unit_tab.click();
     setInterval(WaitForOpenTab, 5 * SECOND * MILISECOND);
     console.log(`%c ${new Date().toLocaleString()} - Open the info`, LOG_COLOR);
+    setInterval(WaitForMining, 10 * MILISECOND);
 
   }, 30 * MILISECOND);
 
   // Mining - excute every minutes
-  setInterval(() => {
+  var WaitForMining = setInterval(() => {
     let units_container = document.getElementsByClassName('units_container')[0];
     if (!units_container) {
       console.log(`%c ${new Date().toLocaleString()} - Can't find the units_container`, LOG_COLOR_ERROR);
@@ -117,8 +149,11 @@
     for (let i = 0; i < units.length; i++) {
       doMining(units, i);
     }
-  }, RAID * SECOND * MILISECOND);
+    // Reset the time
+    setInterval(WaitForMining, RAID * SECOND * MILISECOND);
+  }, 1 * SECOND * MILISECOND);
 
+  // Do mining
   function doMining(units, i) {
     setTimeout(() => {
       let item = units[i];
@@ -144,10 +179,10 @@
           if (raid_button) {
             if (raid_button.outerText == "RAID") {
               raid_button.click();
-              raidTime_i = new Date();
+              raidTimes[i] = new Date();
               console.log(`%c ${new Date().toLocaleString()} - Click raid for tanks #${i+1}`, LOG_COLOR);
             } else {
-              console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} mining inprogress`, LOG_COLOR);
+              console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} mining inprogress (${remainSeconds})`, LOG_COLOR);
             }
           } else {
             console.log(`%c ${new Date().toLocaleString()}- Cannot find raid_button`, LOG_COLOR_ERROR);
@@ -176,4 +211,22 @@
       }, 3 * MILISECOND);
     }, ((i + 1) * 30) * MILISECOND);
   }
+
+  // Send message to webhook
+  function sendMessage(message, errorLevel) {
+    if (!ALLOW_WEB_HOOK) return;
+    message = message || 'message text empty';
+    errorLevel = errorLevel || false;
+    var request = new XMLHttpRequest();
+    request.open("POST", WEB_HOOK);
+    request.setRequestHeader('Content-type', 'application/json');
+    var params = {
+      username: `Captain ${errorLevel?'Error':'Warning'}`,
+      avatar_url: "https://game2.metal-war.com/_nuxt/img/ant.5cc4b20.png",
+      content: message
+    }
+    request.send(JSON.stringify(params));
+  }
+
+  // END
 })();
