@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name         Auto MWM Bot For Popup Info
+// @name         Auto MWM Bot For Multiple Units
 // @namespace    game2.metal-war.com
 // @version      1.0.0
 // @description  Auto Script FOR MWM
 // @author       HieuPham
 // @match        http*://game2.metal-war.com
 // @icon         https://game2.metal-war.com/_nuxt/img/ant.5cc4b20.png
-// @updateURL    https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
-// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
+// @updateURL    https://raw.githubusercontent.com/phamvochihieu/wax-games/main/MWM/metal-war-info.js
+// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/wax-games/main/MWM/metal-war-info.js
 // @grant        none
 // ==/UserScript==
 
@@ -71,7 +71,7 @@
       clearInterval(CheckForLogin);
       username = console_text.substring(20, console_text.lastIndexOf(' ')).trim(); // Get user name
     }
-  }, 10 * SECOND * MILISECOND);
+  }, 1 * SECOND * MILISECOND);
 
   // Wait for login
   var WaitForLogin = setInterval(function() {
@@ -194,26 +194,26 @@
   // Do mining
   function doMining(units, i) {
     setTimeout(() => {
-      let item = units[i];
-      // Check HP- Repair the tool
-      setTimeout(() => {
-        let hp_text = item.getElementsByClassName('hp_text')[0];
-        if (!hp_text) {
-          return
-        };
-        let needRepair = hp_text.innerText.startsWith("0/");
-        if (needRepair) {
-          let button = item.getElementsByClassName('button raid')[0];
-          if (button) {
-            button.click();
-            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
+        let item = units[i];
+        // Check HP- Repair the tool
+        setTimeout(() => {
+          let hp_text = item.getElementsByClassName('hp_text')[0];
+          if (!hp_text) {
+            return
+          };
+          let needRepair = hp_text.innerText.startsWith("0/");
+          if (needRepair) {
+            let button = item.getElementsByClassName('button raid')[0];
+            if (button) {
+              button.click();
+              console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
+            } else {
+              console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
+            }
           } else {
-            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
+            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
           }
-        } else {
-          console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
-        }
-      }, MILISECOND * (i + 1));
+        }, (i * 30 * MILISECOND + MILISECOND) + (MILISECOND * 1));
 
       setTimeout(() => {
         // Check remaining time - Click perform the rading
@@ -248,8 +248,8 @@
         } else {
           console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1}, remaining time ${timer.outerText} (${remainSeconds})`, LOG_COLOR);
         }
-      }, (i + 1) * 10 * MILISECOND);
-    }, ((i + 1) * 20) * MILISECOND);
+      }, (i * 30 * MILISECOND + MILISECOND) + (MILISECOND * 1) + (MILISECOND * 20));
+    }, ((i * 30) * MILISECOND + MILISECOND));
   }
 
   // Send message to webhook

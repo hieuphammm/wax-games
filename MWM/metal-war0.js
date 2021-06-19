@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Auto Bot For MWM
+// @name         Auto Bot For MWM [obsolete]
 // @namespace    game2.metal-war.com
 // @version      1.0.0
 // @description  Auto Script FOR MWM
