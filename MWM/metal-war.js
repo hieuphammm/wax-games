@@ -1,139 +1,81 @@
 // ==UserScript==
-// @name         Auto Bot For MWM
+// @name         Auto click raid for metal
 // @namespace    game2.metal-war.com
 // @version      1.0.0
-// @description  Auto Script FOR MWM
-// @author       HieuPham
+// @description  Auto Mine & Claim
+// @author       miner-team
 // @match        http*://game2.metal-war.com
-// @updateURL
-// @downloadURL  
+// @updateURL    https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
+// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
 // @grant        none
 // ==/UserScript==
 
 (function init() {
 
-  const RAID = 2; // Raiding time
-
+  const RAID = 1; // Raiding time
+  const REPAIR = 10; // repairing time
   const MILISECOND = 1000;
   const SECOND = 60;
-  const DELAY = 30; // delay time for reparing
-  const SLEEP = 20;
-  const DEFAULT_TIMEOUT = 1 * MILISECOND;
+  const DELAY = 2; // delay time for reparing
 
-  var raidTimes = [new Date()];
-
-  Array.prototype.asyncForEach = async function(callback) {
-    for (let index = 0; index < this.length; index++) {
-      await callback(this[index], index, this);
-    }
-  }
-
-  function wait(ms) {
-    return new Promise(r => setTimeout(r, ms))
-  }
+  var raidTime = new Date();
 
   // Mining - excute every minutes
   setInterval(() => {
-
-    let tanks_container = document.getElementsByClassName('tanks_container')[0];
-    if (!tanks_container) {
-      console.log(new Date().toLocaleString() + " - Can't find the tanks_container");
-      return;
+    let timer = document.getElementsByClassName('timer')[0];
+    let remainSeconds = 0;
+    if (timer) {
+      let timerEl = timer.innerHTML.split(':');
+      remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
     }
-    let tanks = tanks_container.children;
-    // Loop all tanks
 
-    (async () => {
-      const promises = [];
+    if (!timer ||
+      remainSeconds < 100 ||
+      (new Date() - raidTime) > 59 * SECOND * MILISECOND) {
 
-      tanks.asyncForEach(async (item, i) => {
-
-        // 1.  Select the tank
-        if (!item.style.getPropertyValue("transform").toString().includes("scale(1)")) {
-          console.log(`Select tank #${i+1}`);
-          item.click();
-        } else {
-          console.log(`Tank #${i+1} selected`);
+      let buttons = document.getElementsByClassName('button raid');
+      let raid = null;
+      buttons.forEach((item, i) => {
+        if (item.outerText == "RAID") {
+          raid = item;
+          return;
         }
-
-        // 2. Check remaining time - Click perform the rading
-        setTimeout(function() {
-          (function Mining() {
-            let timer = document.getElementsByClassName('timer')[0];
-            let remainSeconds = 0;
-            if (timer) {
-              let timerEl = timer.innerHTML.split(':');
-              remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
-            }
-
-            if (raidTimes.length < i + 1) {
-              raidTimes.push(new Date());
-            }
-            let raidTime_i = raidTimes[i];
-
-            if (!timer ||
-              remainSeconds < 100 ||
-              (new Date() - raidTime_i) > 59 * SECOND * MILISECOND) {
-
-              let raid_buttons = document.getElementsByClassName('button raid');
-              if (raid_buttons) {
-                let raid_button = null;
-                raid_buttons.forEach((button, i) => {
-                  if (button.outerText == "RAID") {
-                    raid_button = button;
-                    return;
-                  }
-                });
-
-                if (raid_button) {
-                  raid_button.click();
-                  raidTime_i = new Date();
-                  console.log(new Date().toLocaleString() + ` - Click raid for tanks #${i+1}`);
-                } else {
-                  console.log(new Date().toLocaleString() + `- Tank #${i+1} mining inprogress`);
-                }
-              } else {
-                console.log(new Date().toLocaleString() + `- Cannot find raid_buttons`);
-              }
-            } else {
-              console.log(new Date().toLocaleString() + `- Tank #${i+1}, remaining time ${timer.outerText} (${remainSeconds})`);
-            }
-          })
-        }, 5 * SECOND * MILISECOND);
-
-        // 3. Check HP- Repair the tool
-        setTimeout(function() {
-          (function Mining() {
-            let hp_text = item.getElementsByClassName('hp_text')[0];
-            if (!hp_text) {
-              return
-            };
-
-            let needRepair = hp_text.innerText.startsWith("0/");
-            if (needRepair) {
-              setTimeout(function() {
-                (function Reparing() {
-                  let button = document.getElementsByClassName('repair_price')[0];
-                  if (button) {
-                    button.click();
-                    console.log(new Date().toLocaleString() + `- Tank #${i+1} reparing ......`);
-                  } else {
-                    console.log(new Date().toLocaleString() + `- Tank #${i+1} - An error occurred`);
-                  }
-                })();
-              }, 2 * SECOND * MILISECOND);
-            } else {
-              console.log(new Date().toLocaleString() + ` - Tank #${i+1} HP: ` + hp_text.innerText);
-            }
-
-          }, 5 * SECOND * MILISECOND);
-        })();
-        console.log(i);
-        promises.push(await wait(30000));
       });
 
-      await Promise.all(promises);
+      if (raid) {
+        raid.click();
+        raidTime = new Date();
+        console.log(new Date().toLocaleString() + ' Click raid');
+      } else {
+        console.log(new Date().toLocaleString() + ' mining inprogress');
+      }
+    } else {
+      console.log(new Date().toLocaleString() + ': ' + timer.outerText + ' - ' + remainSeconds);
+    }
+  }, RAID * SECOND * MILISECOND);
 
-    }, RAID * SECOND * MILISECOND);
-  })();
+  // Repair the tool - excute every 2 minutes
+  setInterval(() => {
+    let hpEl = document.getElementsByClassName('hp_text')[0];
+    if (!hpEl) return;
+    let needRepair = hpEl.innerText.startsWith("0/");
+    if (needRepair) {
+      setTimeout(function() {
+        (function waitMine() {
+          let button = document.getElementsByClassName('repair_price')[0];
+          if (button) {
+            button.click();
+            console.log(new Date().toLocaleString() + ' reparing ...');
+          } else {
+            console.log(new Date().toLocaleString() + 'Error...');
+          }
+        })();
+      }, DELAY * SECOND * MILISECOND);
+
+
+    } else {
+      console.log(new Date().toLocaleString() + ' HP: ' + hpEl.innerText);
+    }
+  }, REPAIR * SECOND * MILISECOND);
+
 })();
