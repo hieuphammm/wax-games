@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Auto click raid for metal
+// @name         Auto MWM Bot For Single Unit
 // @namespace    game2.metal-war.com
 // @version      1.0.0
 // @description  Auto Mine & Claim
