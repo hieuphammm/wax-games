@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Auto MWM Bot For Multiple Units
+// @name         Auto MWM Bot For Popup Info
 // @namespace    game2.metal-war.com
 // @version      1.0.0
 // @description  Auto Script FOR MWM
@@ -22,9 +22,6 @@
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
   const LOG_COLOR_ERROR = 'color: red; background: black';
-  const WEB_HOOK_IMP = 'https://discord.com/api/webhooks/855439270953484298/hieupham';
-  const WEB_HOOK = 'https://discord.com/api/webhooks/855465411592060998/hieupham';
-  const ALLOW_WEB_HOOK = false;
 
   var raidTimes = [new Date()];
   var logs = [];
@@ -198,24 +195,25 @@
   function doMining(units, i) {
     setTimeout(() => {
       let item = units[i];
-
       // Check HP- Repair the tool
-      let hp_text = item.getElementsByClassName('hp_text')[0];
-      if (!hp_text) {
-        return
-      };
-      let needRepair = hp_text.innerText.startsWith("0/");
-      if (needRepair) {
-        let button = item.getElementsByClassName('button raid')[0];
-        if (button) {
-          button.click();
-          console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
+      setTimeout(() => {
+        let hp_text = item.getElementsByClassName('hp_text')[0];
+        if (!hp_text) {
+          return
+        };
+        let needRepair = hp_text.innerText.startsWith("0/");
+        if (needRepair) {
+          let button = item.getElementsByClassName('button raid')[0];
+          if (button) {
+            button.click();
+            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
+          } else {
+            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
+          }
         } else {
-          console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
+          console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
         }
-      } else {
-        console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
-      }
+      }, MILISECOND * (i + 1));
 
       setTimeout(() => {
         // Check remaining time - Click perform the rading
@@ -250,7 +248,7 @@
         } else {
           console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1}, remaining time ${timer.outerText} (${remainSeconds})`, LOG_COLOR);
         }
-      }, 10 * MILISECOND);
+      }, (i + 1) * 10 * MILISECOND);
     }, ((i + 1) * 20) * MILISECOND);
   }
 
@@ -259,8 +257,6 @@
     if (!ALLOW_WEB_HOOK) return;
     message = message || 'message text empty';
     errorLevel = errorLevel || false;
-
-    // Add the log to all messages chanel
     var request = new XMLHttpRequest();
     request.open("POST", WEB_HOOK);
     request.setRequestHeader('Content-type', 'application/json');
@@ -271,7 +267,6 @@
     }
     request.send(JSON.stringify(params));
 
-    // Add the log to error messages chanel
     if (errorLevel) {
       var request_imp = new XMLHttpRequest();
       request_imp.open("POST", WEB_HOOK_IMP);
