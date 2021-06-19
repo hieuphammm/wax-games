@@ -5,8 +5,8 @@
 // @description  Auto Mine & Claim
 // @author       miner-team
 // @match        http*://game2.metal-war.com
-// @updateURL    https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
-// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
+// @updateURL    https://raw.githubusercontent.com/phamvochihieu/wax-games/main/MWM/metal-war.js
+// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/wax-games/main/MWM/metal-war.js
 // @grant        none
 // ==/UserScript==
 
