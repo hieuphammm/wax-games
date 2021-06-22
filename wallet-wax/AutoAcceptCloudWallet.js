@@ -16,7 +16,7 @@
     var tags_i = document.getElementsByTagName("button");
     var contractName = document.getElementsByClassName("simple-action-details")[0];
     if (ALLOW_ACCEPT_ALL ||
-      (contractName && (contractName.outerText.includes("Call smart contract function m.federation > mine") ||
+      (contractName && (contractName.outerText.includes("Call smart contract function m.federation >") ||
         contractName.outerText.includes("Call smart contract function metalwargame >") ||
         contractName.outerText.includes("Call smart contract function metalwarmint >")))) {
       for (var i = 0; i < tags_i.length; i++) {
