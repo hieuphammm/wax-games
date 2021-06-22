@@ -74,6 +74,25 @@
     cbAudio.nextElementSibling.click();
   }
 
+  // Make sure you are loggged in - if not reload the page
+  var CheckForLogin = setInterval(function() {
+    let loginBtn = document.getElementById('login-button');
+    let mineBtn = document.getElementById('mine-button');
+    let claimBtn = document.getElementById('claim-button');
+
+    if (!loginBtn.hasAttribute('disabled')) {
+      location.reload();
+      return;
+    }
+
+    if (loginBtn.hasAttribute('disabled') &&
+      claimBtn.hasAttribute('disabled') &&
+      !mineBtn.hasAttribute('disabled')) {
+      location.reload();
+      return;
+    }
+  }, 15 * 60 * MILISECOND);
+
   // Click login
   setTimeout(function() {
     (function waitLogin() {
@@ -86,9 +105,9 @@
       // Login
       let loginBtn = document.getElementById('login-button');
       if (!loginBtn.hasAttribute('disabled')) {
-          timeToLogin = 10 * MILISECOND;
-          loginBtn.click();
-          console.log(new Date().toLocaleString() + ' Click Login');
+        timeToLogin = 10 * MILISECOND;
+        loginBtn.click();
+        console.log(new Date().toLocaleString() + ' Click Login');
       } else {
         setTimeout(waitLogin, DEFAULT_TIMEOUT);
       }
@@ -129,7 +148,7 @@
             //await delay(remainSeconds);
             location.reload();
           })();
-        }, (remainSeconds+3) * MILISECOND);
+        }, (remainSeconds + 3) * MILISECOND);
       } else {
 
         console.log('%c Claiming...', LOG_COLOR);

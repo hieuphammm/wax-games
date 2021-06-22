@@ -31,7 +31,8 @@
   // Log-error writer
   var LogCapturing = setInterval(function() {
     let notify_main = document.getElementsByClassName('notify_main');
-    if (!notify_main) {
+    if (!notify_main
+       || notify_main.length == 0) {
       return;
     }
     notify_main.forEach((message, i) => {
@@ -46,7 +47,7 @@
       }
       sendMessage(message_text); // send to webhook
     });
-    setInterval(LogCapturing, 20 * MILISECOND);
+    setInterval(LogCapturing, 30 * MILISECOND);
   }, 10 * MILISECOND);
 
   // Log monitoring
@@ -230,7 +231,7 @@
         let raidTime_i = raidTimes[i];
 
         if (!timer ||
-          remainSeconds < 100 ||
+          remainSeconds < 50 ||
           (new Date() - raidTime_i) > 59 * SECOND * MILISECOND) {
 
           let raid_button = item.getElementsByClassName('button raid')[1];
@@ -263,7 +264,7 @@
     var params = {
       username: `Captain ${errorLevel?'Error':'Warning'}`,
       avatar_url: "https://game2.metal-war.com/_nuxt/img/ant.5cc4b20.png",
-      content: `(${username}) - ${message}`
+      content: `(${username}) ${new Date().toLocaleString()} - ${message}`
     }
     request.send(JSON.stringify(params));
 
@@ -274,7 +275,7 @@
       var params_imp = {
         username: `Captain Bot`,
         avatar_url: "https://game2.metal-war.com/_nuxt/img/ant.5cc4b20.png",
-        content: `(${username}) - ${message}`
+        content: `(${username}) ${new Date().toLocaleString()} - ${message}`
       }
       request_imp.send(JSON.stringify(params_imp));
     }
