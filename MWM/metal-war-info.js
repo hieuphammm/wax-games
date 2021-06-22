@@ -22,6 +22,9 @@
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
   const LOG_COLOR_ERROR = 'color: red; background: black';
+  const WEB_HOOK_IMP = 'https://discord.com/api/webhooks/855439270953484298/abc';
+  const WEB_HOOK = 'https://discord.com/api/webhooks/855465411592060998/xyz';
+  const ALLOW_WEB_HOOK = false;
 
   var raidTimes = [new Date()];
   var logs = [];

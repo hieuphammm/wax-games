@@ -22,8 +22,8 @@
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
   const LOG_COLOR_ERROR = 'color: red; background: black';
-  const WEB_HOOK_IMP = 'https://discord.com/api/webhooks/855439270953484298/aM5xrPl79p_WXpuynd7t7XJDHu2HPZXxp1ln7fiEuPCtlT8Yvjk947LdZ77j2IQ1V2eE';
-  const WEB_HOOK = 'https://discord.com/api/webhooks/855465411592060998/39_QVxD59sG-agaBmZqt7fNI1jeHriUDVTy9GOHtbZ39nqnsA7hVuLc4IPc8BwSibAIo';
+  const WEB_HOOK_IMP = 'https://discord.com/api/webhooks/855439270953484298/abc';
+  const WEB_HOOK = 'https://discord.com/api/webhooks/855465411592060998/xyz';
   const ALLOW_WEB_HOOK = true;
 
   var raidTimes = [new Date()];
