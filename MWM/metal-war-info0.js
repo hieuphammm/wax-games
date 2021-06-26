@@ -13,7 +13,7 @@
 
 (function init() {
 
-  const NUMBER_OF_UNIT = 1;
+  const NUMBER_OF_UNIT = 2;
   const RAID = NUMBER_OF_UNIT;
   const MILISECOND = 1000;
   const SECOND = 60;
@@ -34,8 +34,8 @@
   // Log-error writer
   var LogCapturing = setInterval(function() {
     let notify_main = document.getElementsByClassName('notify_main');
-    if (!notify_main
-       || notify_main.length == 0) {
+    if (!notify_main ||
+      notify_main.length == 0) {
       return;
     }
     notify_main.forEach((message, i) => {
@@ -56,7 +56,7 @@
   // Log monitoring
   var LogMonitoring = setInterval(function() {
     erorr_count = 0;
-    if (logs.length > 5) {
+    if (logs.length > 10) {
       location.reload();
     } else {
       logs = [];
@@ -123,46 +123,52 @@
   // Open the popup info
   var WaitForOpenTab = setInterval(function() {
     let shards_wrapper = document.getElementsByClassName('shards_wrapper')[0];
-    if (!shards_wrapper || shards_wrapper.style.getPropertyValue("opacity").toString() != "1") {
-      // do open the shards_wrapper (repair info_button)
-      let info_button = document.getElementsByClassName('repair info_button')[0];
-      if (!info_button) {
-        console.log(`%c ${new Date().toLocaleString()} - Can't find the info_button`, LOG_COLOR_ERROR);
-        sendMessage(`${new Date().toLocaleString()} - Can't find the info_button`, true);
+    setTimeout(() => {
+
+      if (!shards_wrapper || shards_wrapper.style.getPropertyValue("opacity").toString() != "1") {
+        // do open the shards_wrapper (repair info_button)
+        let info_button = document.getElementsByClassName('repair info_button')[0];
+        if (!info_button) {
+          console.log(`%c ${new Date().toLocaleString()} - Can't find the info_button`, LOG_COLOR_ERROR);
+          sendMessage(`${new Date().toLocaleString()} - Can't find the info_button`, true);
+          return;
+        }
+        // do click
+        info_button.click();
+        setInterval(WaitForMining, 10 * MILISECOND);
+      }
+    }, 1 * MILISECOND);
+
+    setTimeout(() => {
+      let tabs_element = shards_wrapper.getElementsByClassName('tabs')[0];
+      if (!tabs_element) {
+        console.log(`%c ${new Date().toLocaleString()} - Can't find the tabs_element`, LOG_COLOR_ERROR);
+        sendMessage(`${new Date().toLocaleString()} - Can't find the tabs_element`, true);
         return;
       }
-      // do click
-      info_button.click();
-    }
+      let tabs = tabs_element.children;
 
-    let tabs_element = shards_wrapper.getElementsByClassName('tabs')[0];
-    if (!tabs_element) {
-      console.log(`%c ${new Date().toLocaleString()} - Can't find the tabs_element`, LOG_COLOR_ERROR);
-      sendMessage(`${new Date().toLocaleString()} - Can't find the tabs_element`, true);
-      return;
-    }
-    let tabs = tabs_element.children;
-
-    let unit_tab = null;
-    tabs.forEach((button, i) => {
-      if (button.innerText.toString().toLowerCase() == "units") {
-        unit_tab = button;
+      let unit_tab = null;
+      tabs.forEach((button, i) => {
+        if (button.innerText.toString().toLowerCase() == "units") {
+          unit_tab = button;
+          return;
+        }
+      });
+      if (!unit_tab) {
+        console.log(`%c ${new Date().toLocaleString()} - Can't find the units tab`, LOG_COLOR_ERROR);
+        sendMessage(`${new Date().toLocaleString()} - Can't find the units tab`, true);
         return;
       }
-    });
-    if (!unit_tab) {
-      console.log(`%c ${new Date().toLocaleString()} - Can't find the units tab`, LOG_COLOR_ERROR);
-      sendMessage(`${new Date().toLocaleString()} - Can't find the units tab`, true);
-      return;
-    }
 
-    if (unit_tab.classList.contains("active_tab")) return;
+      if (unit_tab.classList.contains("active_tab")) return;
 
-    unit_tab.click();
-    setInterval(WaitForOpenTab, 5 * SECOND * MILISECOND);
-    console.log(`%c ${new Date().toLocaleString()} - Open the info`, LOG_COLOR);
-    setInterval(WaitForMining, 10 * MILISECOND);
-    erorr_count = 0;
+      unit_tab.click();
+      setInterval(WaitForOpenTab, 5 * SECOND * MILISECOND);
+      console.log(`%c ${new Date().toLocaleString()} - Open the info`, LOG_COLOR);
+      setInterval(WaitForMining, 20 * MILISECOND);
+      erorr_count = 0;
+    }, 7 * MILISECOND);
 
   }, 20 * MILISECOND);
 
@@ -178,7 +184,7 @@
         sendMessage(`${new Date().toLocaleString()} - Can't find the units_container`, true);
       }
 
-      if (erorr_count > 5) {
+      if (erorr_count > 10) {
         location.reload();
       }
       return;
@@ -198,26 +204,26 @@
   // Do mining
   function doMining(units, i) {
     setTimeout(() => {
-        let item = units[i];
-        // Check HP- Repair the tool
-        setTimeout(() => {
-          let hp_text = item.getElementsByClassName('hp_text')[0];
-          if (!hp_text) {
-            return
-          };
-          let needRepair = hp_text.innerText.startsWith("0/");
-          if (needRepair) {
-            let button = item.getElementsByClassName('button raid')[0];
-            if (button) {
-              button.click();
-              console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
-            } else {
-              console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
-            }
+      let item = units[i];
+      // Check HP- Repair the tool
+      setTimeout(() => {
+        let hp_text = item.getElementsByClassName('hp_text')[0];
+        if (!hp_text) {
+          return
+        };
+        let needRepair = hp_text.innerText.startsWith("0/");
+        if (needRepair) {
+          let button = item.getElementsByClassName('button raid')[0];
+          if (button) {
+            button.click();
+            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reparing ......`, LOG_COLOR);
           } else {
-            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
+            console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} - An error occurred`, LOG_COLOR_ERROR);
           }
-        }, (i * 30 * MILISECOND + MILISECOND) + (MILISECOND * 1));
+        } else {
+          console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
+        }
+      }, (i * 30 * MILISECOND + MILISECOND) + (MILISECOND * 1));
 
       setTimeout(() => {
         // Check remaining time - Click perform the rading
