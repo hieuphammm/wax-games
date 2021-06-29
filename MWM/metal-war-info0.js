@@ -56,7 +56,7 @@
   // Log monitoring
   var LogMonitoring = setInterval(function() {
     erorr_count = 0;
-    if (logs.length > 10) {
+    if (logs.length > 50) {
       location.reload();
     } else {
       logs = [];
