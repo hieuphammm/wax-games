@@ -13,12 +13,10 @@
 
 (function init() {
 
-  const NUMBER_OF_UNIT = 2;
-  const RAID = NUMBER_OF_UNIT;
+  const NUMBER_OF_UNIT = 2;  
   const MILISECOND = 1000;
   const SECOND = 60;
-  const DELAY = 30;
-  const SLEEP = 20;
+  const RAID_DELAY_PER_UNIT = NUMBER_OF_UNIT * 40 * MILISECOND;
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
   const LOG_COLOR_ERROR = 'color: red; background: black';
@@ -44,19 +42,21 @@
       if (message_text.includes("wrong")) {
         logs.push(message_text); // push to the array
         sendMessage(message_text, true); // send to webhook
+        console.log(`%c ${new Date().toLocaleString()} - Error ${message_text}`, LOG_COLOR_ERROR);
       }
       if (message_text.includes("error")) {
         sendMessage(message_text, true); // send to webhook
+        console.log(`%c ${new Date().toLocaleString()} - Error ${message_text}`, LOG_COLOR_ERROR);
       }
       sendMessage(message_text); // send to webhook
     });
-    setInterval(LogCapturing, 30 * MILISECOND);
-  }, 10 * MILISECOND);
+    //setInterval(LogCapturing, 30 * MILISECOND);
+  }, 30 * MILISECOND);
 
   // Log monitoring
   var LogMonitoring = setInterval(function() {
     erorr_count = 0;
-    if (logs.length > 50) {
+    if (logs.length > 40) {
       location.reload();
     } else {
       logs = [];
@@ -116,7 +116,6 @@
       console.log(`%c ${new Date().toLocaleString()} - Login success`, LOG_COLOR);
 
       setInterval(WaitForOpenTab, 5 * MILISECOND);
-
     }, 5 * MILISECOND);
   }, 5 * MILISECOND);
 
@@ -135,7 +134,7 @@
         }
         // do click
         info_button.click();
-        setInterval(WaitForMining, 10 * MILISECOND);
+        //setInterval(WaitForMining, 10 * MILISECOND);
       }
     }, 1 * MILISECOND);
 
@@ -166,14 +165,13 @@
       unit_tab.click();
       setInterval(WaitForOpenTab, 5 * SECOND * MILISECOND);
       console.log(`%c ${new Date().toLocaleString()} - Open the info`, LOG_COLOR);
-      setInterval(WaitForMining, 20 * MILISECOND);
+      //setInterval(WaitForMining, 20 * MILISECOND);
       erorr_count = 0;
     }, 7 * MILISECOND);
-
   }, 20 * MILISECOND);
 
   // Mining - excute every minutes
-  var WaitForMining = setInterval(() => {
+  var WaitForMining = () => {
     let units_container = document.getElementsByClassName('units_container')[0];
     if (!units_container) {
       console.log(`%c ${new Date().toLocaleString()} - Can't find the units_container`, LOG_COLOR_ERROR);
@@ -199,19 +197,19 @@
       let item = units[i];
       let hp_text = item.getElementsByClassName('hp_text')[0];
       if (hp_text) {
-        j++;
-        doMining(units, j);
+        doMining(item, j++);
       };
     }
-    // Reset the time
-    setInterval(WaitForMining, RAID * SECOND * MILISECOND);
-  }, 30 * MILISECOND);
+  };
+
+  setTimeout(() => {
+    WaitForMining();
+    setInterval(WaitForMining, RAID_DELAY_PER_UNIT);
+  }, 40 * MILISECOND);
 
   // Do mining
-  function doMining(units, i) {
+  function doMining(item, i) {
     setTimeout(() => {
-      let item = units[i];
-      // Check HP- Repair the tool
       setTimeout(() => {
         let hp_text = item.getElementsByClassName('hp_text')[0];
         if (!hp_text) {
@@ -229,7 +227,7 @@
         } else {
           console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} HP: ${hp_text.innerText}`, LOG_COLOR);
         }
-      }, (i * 30 * MILISECOND + MILISECOND) + (MILISECOND * 1));
+      }, (i * 20 * MILISECOND + MILISECOND) + MILISECOND);
 
       setTimeout(() => {
         // Check remaining time - Click perform the rading
@@ -247,7 +245,7 @@
 
         if (!timer ||
           remainSeconds < 50 ||
-          (new Date() - raidTime_i) > 59 * SECOND * MILISECOND) {
+          (new Date() - raidTime_i) > 45 * SECOND * MILISECOND) {
 
           let raid_button = item.getElementsByClassName('button raid')[1];
           if (raid_button) {
@@ -264,8 +262,8 @@
         } else {
           console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1}, remaining time ${timer.outerText} (${remainSeconds})`, LOG_COLOR);
         }
-      }, (i * 30 * MILISECOND + MILISECOND) + (MILISECOND * 1) + (MILISECOND * 20));
-    }, ((i * 30) * MILISECOND + MILISECOND));
+      }, (i * 20 * MILISECOND + MILISECOND) + MILISECOND + (MILISECOND * 16));
+    }, ((i * 20) * MILISECOND + MILISECOND));
   }
 
   // Send message to webhook
