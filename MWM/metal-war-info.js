@@ -194,8 +194,14 @@
 
     let units = units_container.children;
     // Loop all tanks
+    let j = 0;
     for (let i = 0; i < units.length; i++) {
-      doMining(units, i);
+      let item = units[i];
+      let hp_text = item.getElementsByClassName('hp_text')[0];
+      if (hp_text) {
+        j++;
+        doMining(units, j);
+      };
     }
     // Reset the time
     setInterval(WaitForMining, RAID * SECOND * MILISECOND);
