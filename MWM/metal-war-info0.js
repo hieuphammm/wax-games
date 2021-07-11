@@ -216,7 +216,7 @@
           let balance_amount_text = shards_count.outerText.split('\n')[0];
           let balance_amount = shards_count.outerText.split('MWM')[0].trim();
           let repair_price = item.getElementsByClassName('repair_price')[0].outerText.trim();
-          if (0 + repair_price > balance_amount) {
+          if (Number(repair_price)> Number(balance_amount)) {
             return;
           }
         }
