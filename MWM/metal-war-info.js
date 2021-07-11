@@ -13,7 +13,7 @@
 
 (function init() {
 
-  const NUMBER_OF_UNIT = 2;  
+  const NUMBER_OF_UNIT = 2;
   const MILISECOND = 1000;
   const SECOND = 60;
   const RAID_DELAY_PER_UNIT = NUMBER_OF_UNIT * 40 * MILISECOND;
@@ -211,6 +211,16 @@
   function doMining(item, i) {
     setTimeout(() => {
       setTimeout(() => {
+        let shards_count = document.getElementsByClassName('shards_count')[0];
+        if (shards_count) {
+          let balance_amount_text = shards_count.outerText.split('\n')[0];
+          let balance_amount = shards_count.outerText.split('MWM')[0].trim();
+          let repair_price = item.getElementsByClassName('repair_price')[0].outerText.trim();
+          if (0 + repair_price > balance_amount) {
+            return;
+          }
+        }
+
         let hp_text = item.getElementsByClassName('hp_text')[0];
         if (!hp_text) {
           return
@@ -230,6 +240,13 @@
       }, (i * 20 * MILISECOND + MILISECOND) + MILISECOND);
 
       setTimeout(() => {
+        let tired_less = item.getElementsByClassName('tiredless')[0];
+        let reached_max_raid = tired_less.innerText.endsWith("18");
+        if (reached_max_raid) {
+          console.log(`%c ${new Date().toLocaleString()} - Tank #${i+1} reached max raid per day`, LOG_COLOR);
+          return;
+        }
+
         // Check remaining time - Click perform the rading
         let timer = item.getElementsByClassName('button raid')[1];
         let remainSeconds = 0;
