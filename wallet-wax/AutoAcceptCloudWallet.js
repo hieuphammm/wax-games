@@ -3,7 +3,7 @@
 // @namespace    wax.io
 // @version      1.0.0
 // @description  Auto Accept Signing for WAX.io
-// @author       Likecyber
+// @author       Hieu Pham
 // @match        http*://all-access.wax.io/cloud-wallet/signing/
 // @grant        none
 // ==/UserScript==
@@ -17,11 +17,13 @@
     var contractName = document.getElementsByClassName("simple-action-details")[0];
     if (ALLOW_ACCEPT_ALL ||
       (contractName && (contractName.outerText.includes("Call smart contract function m.federation >") ||
+        contractName.outerText.includes("farmersworld > claim") ||
+        contractName.outerText.includes("farmersworld > repair") ||
         contractName.outerText.includes("Call smart contract function metalwargame >") ||
         contractName.outerText.includes("Call smart contract function metalwarmint >")))) {
       for (var i = 0; i < tags_i.length; i++) {
-        if (tags_i[i].textContent == "Approve" &&
-          !tags_i[i].hasAttribute('disabled')) {
+        if (tags_i[i].textContent == "Approve"
+           && !tags_i[i].hasAttribute('disabled')) {
           var tags_j = document.getElementsByTagName("input");
           for (var j = 0; j < tags_j.length; j++) {
             if (tags_j[j].value == "remember") {
